@@ -19,7 +19,7 @@ export class StatsService {
             });
     }
 
-    async getStatByAdId(id: string) {
+    async getStatsByAdId(id: string) {
         const avgtime = await this.chClient.find({
             select: `avg(CAST(time AS Float64)) AS avgtime`,
             where: `ad = '${id}'`
@@ -32,7 +32,7 @@ export class StatsService {
         return stats.concat(avgtime);
     }
 
-    async getStatByPlatform(url: string) {
+    async getStatsByPlatform(url: string) {
         const avgtime = await this.chClient.find({
             select: `avg(CAST(time AS Float64)) AS avgtime`,
             where: `platform = '${url}'`
@@ -45,6 +45,20 @@ export class StatsService {
         return stats.concat(avgtime);
     }
 
+    async getStatByPlatform(url: string, action: string) {
+        return await this.chClient.find({
+            where: `action IN ('${action}') AND platform = '${url}'`,
+            select: `action, count(*) AS total`,
+            groupBy: 'action'
+        })
+    }
+    async getStatByAdId(id: string, action: string) {
+        return await this.chClient.find({
+            where: `action IN ('${action}') AND ad = '${id}'`,
+            select: `action, count(*) AS total`,
+            groupBy: 'action'
+        })
+    }
     async recordStat(stat: Stat) {
         const response = await this.chClient
             .create({
