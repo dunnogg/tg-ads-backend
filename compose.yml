@@ -1,0 +1,62 @@
+version: '3.9'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tgadsbackend
+    ports:
+      - '3000:3000'
+    depends_on:
+      - clickhouse
+    volumes_from:
+      - clickhouse:rw
+    restart: unless-stopped
+    networks:
+      - apinet
+      - gateway
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /app
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: ./package.json
+        - action: rebuild
+          path: ./package-lock.json
+    env_file:
+      - .env
+  clickhouse:
+    image: clickhouse/clickhouse-server
+    ports:
+      - '8123:8123'
+      - '9000:9000'
+    container_name: clickhouse
+    ulimits:
+      nofile: 262144
+    restart: unless-stopped
+    environment:
+      - CLICKHOUSE_HOST=${CLICKHOUSE_HOST}
+      - CLICKHOUSE_USER=${CLICKHOUSE_USER}
+      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD}
+    volumes:
+      - chdata:/var/lib/clickhouse/
+    networks:
+      - apinet
+volumes:
+  cache:
+  chdata:
+  pgdata:
+  rdsdata:
+networks:
+  apinet:
+    name: apinet
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "192.168.32.0/24"
+  gateway:
+    name: gateway
+    driver: bridge
