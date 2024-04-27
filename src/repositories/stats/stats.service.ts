@@ -69,7 +69,7 @@ export class StatsService {
                 ad: stat.ad,
                 platform: stat.platform,
                 date: Date.now().toString(),
-                userData: stat.userdata,
+                userdata: stat.userdata,
                 action: stat.stat_name,
                 time: String(stat.time)
             })
