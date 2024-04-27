@@ -35,7 +35,7 @@ export class Stats {
     @Prop({
         type: DataType.String
     })
-    public userdata: object;
+    public userdata?: object;
 
     @Prop({
         type: DataType.String,

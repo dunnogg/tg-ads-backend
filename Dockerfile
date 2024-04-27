@@ -6,8 +6,10 @@ COPY package*.json ./
 
 RUN npm ci
 
+RUN npm install pm2 -g
+
 COPY . .
 
 RUN npm run build
 
-CMD [ "npm", "run", "start:dev" ]
+CMD ["pm2-runtime", "dist/main.js"]

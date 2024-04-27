@@ -38,7 +38,7 @@ export class CreateStatDto {
         required: true,
         description: 'ad id'
     })
-    userdata: object;
+    userdata?: object;
 
     @ApiProperty({
         example: '1231231',
