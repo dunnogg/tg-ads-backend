@@ -62,15 +62,15 @@ export class StatsService {
     async recordStat(stat: Stat) {
         const response = await this.chClient
             .create({
-                id: String(++this.countStats),
+                id: ++this.countStats,
                 ad: stat.ad,
                 platform: stat.platform,
                 date: Date.now().toString(),
-                userdata: stat.userdata,
+                userdata: stat.userdata || 'undefined',
                 action: stat.stat_name,
-                time: String(stat.time)
+                time: String(stat.time) || null
             })
-            .then(null, () => this.countStats--);
+            .then(null, () => {this.countStats--});
         return `Success create ${response}`;
     }
 }

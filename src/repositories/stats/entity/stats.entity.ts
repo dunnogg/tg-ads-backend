@@ -8,9 +8,9 @@ import { StatName } from '../interfaces/stats.interface';
 })
 export class Stats {
     @Prop({
-        type: DataType.String,
+        type: DataType.UInt64,
     })
-    public id: string;
+    public id: number;
 
     @Prop({
         type: DataType.String,
@@ -33,9 +33,9 @@ export class Stats {
     public date: string;
 
     @Prop({
-        type: DataType.String
+        type: DataType.String,
     })
-    public userdata?: object;
+    public userdata?: string;
 
     @Prop({
         type: DataType.String,

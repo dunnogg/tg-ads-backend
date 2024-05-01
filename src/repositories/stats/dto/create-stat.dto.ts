@@ -31,12 +31,12 @@ export class CreateStatDto {
         required: true,
         description: 'time'
     })
-    time?: string;
+    time: string;
 
     @ApiProperty({
         example: '{ chatid: 312313, name: dunno}',
         required: false,
         description: 'User data'
     })
-    userdata?: object;
+    userdata: string;
 }
