@@ -39,7 +39,7 @@ export class CreateStatDto {
         required: false,
         description: 'User data'
     })
-    userdata: object;
+    userdata?: object;
 
     @IsNotEmpty()
     @ApiProperty({

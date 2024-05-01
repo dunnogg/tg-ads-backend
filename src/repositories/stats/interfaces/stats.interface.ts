@@ -3,8 +3,8 @@ export type StatName = 'open' | 'close' | 'mute' | 'unmute' | 'impression 10 sec
 
 export interface Stat {
     stat_name: StatName;
-    time: string;
-    userdata: object;
+    time: number;
+    userdata?: object;
     ad: string;
     platform: string;
     date: string;

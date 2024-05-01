@@ -28,6 +28,7 @@ export class StatsController {
     }
     @Post()
     recordStat(@Body() statDto: CreateStatDto) {
+        console.log(statDto)
         return this.statsService.recordStat(statDto);
     }
 }
