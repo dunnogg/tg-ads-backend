@@ -26,26 +26,17 @@ export class CreateStatDto {
     })
     ad: string
 
-    @IsNotEmpty()
     @ApiProperty({
         example: '10.21312321',
         required: true,
         description: 'time'
     })
-    time: string;
+    time?: string;
 
     @ApiProperty({
         example: '{ chatid: 312313, name: dunno}',
         required: false,
         description: 'User data'
     })
-    userdata: object;
-
-    @IsNotEmpty()
-    @ApiProperty({
-        example: '1231231',
-        required: true,
-        description: 'Date in unix timestamp'
-    })
-    date: string;
+    userdata?: object;
 }
