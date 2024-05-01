@@ -62,7 +62,7 @@ export class StatsService {
     async recordStat(stat: Stat) {
         const response = await this.chClient
             .create({
-                id: ++this.countStats,
+                id: String(++this.countStats),
                 ad: stat.ad,
                 platform: stat.platform,
                 date: Date.now().toString(),

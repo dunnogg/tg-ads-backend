@@ -2,7 +2,7 @@ import { StatName } from '../interfaces/stats.interface';
 import { IsNotEmpty} from 'class-validator';
 import {ApiProperty} from "@nestjs/swagger";
 export class CreateStatDto {
-
+    @IsNotEmpty()
     @ApiProperty({
         example: 'view',
         required: true,
@@ -26,20 +26,22 @@ export class CreateStatDto {
     })
     ad: string
 
+    @IsNotEmpty()
     @ApiProperty({
         example: '10.21312321',
         required: true,
         description: 'time'
     })
-    time: number;
+    time: string;
 
     @ApiProperty({
         example: '{ chatid: 312313, name: dunno}',
-        required: true,
-        description: 'ad id'
+        required: false,
+        description: 'User data'
     })
     userdata: object;
 
+    @IsNotEmpty()
     @ApiProperty({
         example: '1231231',
         required: true,

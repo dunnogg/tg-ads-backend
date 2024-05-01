@@ -6,7 +6,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors();
   const options = new DocumentBuilder()
-      .setTitle('GraphicsTG API')
+      .setTitle('MiniAds Backend API')
       .setVersion('1.0')
       .addServer('/', 'Local environment')
       .build();
