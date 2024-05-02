@@ -3,8 +3,11 @@ import { AppModule } from './app.module';
 import {DocumentBuilder, SwaggerModule} from "@nestjs/swagger";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-    app.enableCors();
+  const app = await NestFactory.create(AppModule, {
+    cors: {
+      origin: '*',
+    },
+  });
   const options = new DocumentBuilder()
       .setTitle('MiniAds Backend API')
       .setVersion('1.0')

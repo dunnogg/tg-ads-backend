@@ -45,6 +45,14 @@ services:
       - chdata:/var/lib/clickhouse/
     networks:
       - apinet
+  nginx:
+    build: "./nginx"
+    networks:
+      - apinet
+    ports:
+      - "80:80"
+    depends_on:
+      - app
 volumes:
   cache:
   chdata:
