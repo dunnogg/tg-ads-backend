@@ -21,7 +21,7 @@ export class StatsService {
 
     async getStatsByAdId(id: string) {
         const avgtime = await this.chClient.find({
-            select: `avg(CASE WHEN time != 'undefined' THEN CAST(time AS Float64) ELSE NULL END) AS time`,
+            select: `avg(toFloat64OrNull(time)) AS avg_time`,
             where: `ad = '${id}'`
         });
         let stats = await this.chClient.find({
@@ -34,7 +34,7 @@ export class StatsService {
 
     async getStatsByPlatform(url: string) {
         const avgtime = await this.chClient.find({
-            select: `avg(CASE WHEN time != 'undefined' THEN CAST(time AS Float64) ELSE NULL END) AS time`,
+            select: `avg(toFloat64OrNull(time)) AS avg_time`,
             where: `platform = '${url}'`
         });
         let stats = await this.chClient.find({
@@ -67,7 +67,7 @@ export class StatsService {
                 platform: stat.platform,
                 date: Date.now().toString(),
                 userdata: JSON.stringify(stat.userdata) || 'undefined',
-                action: stat.stat_name,
+                action: stat.action,
                 time: String(stat.time) || null
             })
             .then(null, () => {this.countStats--});

@@ -8,7 +8,7 @@ export class CreateStatDto {
         required: true,
         description: 'Type of action'
     })
-    stat_name: StatName;
+    action: StatName;
 
     @IsNotEmpty()
     @ApiProperty({
