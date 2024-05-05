@@ -27,7 +27,7 @@ export class StatsController {
         return this.statsService.getStatByAdId(id, statname);
     }
 
-    @Get()
+    @Get('all')
     getAllStats() {
         return this.statsService.getAllStats()
     }

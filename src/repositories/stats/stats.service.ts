@@ -1,7 +1,7 @@
 import {Inject, Injectable} from '@nestjs/common';
 import {Stat} from "./interfaces/stats.interface";
 import * as process from "process";
-import {ClickHouseClient, Observable} from "@depyronick/nestjs-clickhouse";
+import {ClickHouseClient} from "@depyronick/nestjs-clickhouse";
 
 @Injectable()
 export class StatsService {
@@ -68,15 +68,7 @@ export class StatsService {
         try {
             const response = await this.chClient.query(`
             INSERT INTO Stats (id, ad, platform, date, userdata, action, time) 
-            VALUES (
-            ${++this.countStats},
-             '${stat.ad}',
-              '${stat.platform}',
-               '${Date.now()}',
-                '${JSON.stringify(stat.userdata) || 'undefined'}',
-                 '${stat.action}',
-                  ${stat.time || 'NULL'})`
-            );
+            VALUES (${++this.countStats}, '${stat.ad}', '${stat.platform}', '${Date.now()}', '${JSON.stringify(stat.userdata) || 'undefined'}', '${stat.action}', ${stat.time || 'NULL'})`);
             return `Success create ${response}`;
         } catch (error) {
             console.error('Error recording stat:', error);
