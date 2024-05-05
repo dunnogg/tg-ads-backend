@@ -1,14 +1,23 @@
-import {StatsService} from "./stats.service";
 import { Module } from '@nestjs/common';
 import { StatsController } from './stats.controller';
-import { ClickHouseModule } from '@oneralon/nestjs-clickhouse';
-import { Stats } from './entity/stats.entity';
+import {ClickHouseClient, ClickHouseConnectionProtocol, ClickHouseModule} from '@depyronick/nestjs-clickhouse';
+import { StatsService } from './stats.service';
+import * as process from "process";
 
 @Module({
-    imports: [ClickHouseModule.forFeature([Stats])],
+    imports: [
+        ClickHouseModule.register([{
+            host: `${process.env.CLICKHOUSE_HOST}`,
+            username: `${process.env.CLICKHOUSE_USER}`,
+            password: `${process.env.CLICKHOUSE_PASSWORD}`,
+            name: `${process.env.CLICKHOUSE_DB}`,
+            httpConfig: {
+                protocol: ClickHouseConnectionProtocol.HTTPS,
+            },
+        }]),
+    ],
     controllers: [StatsController],
-    providers: [StatsService],
-    exports: [StatsModule],
+    providers: [StatsService, ClickHouseClient], // Ваши сервис и сущность Stats
+    exports: [StatsService], // Если StatsService должен быть доступен за пределами этого модуля
 })
 export class StatsModule {}
-

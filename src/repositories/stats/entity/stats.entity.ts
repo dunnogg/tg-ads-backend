@@ -1,5 +1,5 @@
-import { DataType, Model, Prop, Schema } from '@oneralon/nestjs-clickhouse';
 import { StatName } from '../interfaces/stats.interface';
+import {DataType, Model, Prop, Schema} from "@oneralon/nestjs-clickhouse";
 
 @Schema({
     tableName: 'stats',

@@ -1,76 +1,78 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { StatsModel } from './entity/stats.entity';
 import { Stat } from "./interfaces/stats.interface";
+import * as process from "process";
+import {ClickHouseClient} from "@depyronick/nestjs-clickhouse";
 
 @Injectable()
 export class StatsService {
-    private countStats:  number;
+    private countStats: number;
+
     constructor(
-        @Inject('Stats')
-        private readonly chClient: StatsModel,
+        @Inject(`${process.env.CLICKHOUSE_DB}`)
+        private readonly chClient: ClickHouseClient,
     ) {
         this.countStats = 0;
-        this.chClient
-            .find({
-                select: `count(*) AS total`,
-            })
-            .then((res) => {
-                this.countStats = res[0]['total'];
-            });
+        this.initializeCountStats();
+    }S
+
+    private async initializeCountStats() {
+        try {
+            const res = await this.chClient.query(`SELECT count(*) AS total FROM Stats`);
+            this.countStats = res[0].total;
+        } catch (error) {
+            console.error('Error initializing countStats:', error);
+        }
     }
 
     async getStatsByAdId(id: string) {
-        const avgtime = await this.chClient.find({
-            select: `avg(toFloat64OrNull(time)) AS  time`,
-            where: `ad = '${id}'`
-        });
-        let stats = await this.chClient.find({
-            where: `action IN ('open', 'close', 'mute', 'unmute', 'impression 10 sec', 'view', 'Watched to the end') AND ad = '${id}'`,
-            select: `action, count(*) AS total`,
-            groupBy: 'action'
-        })
-        return stats.concat(avgtime);
+        try {
+            const avgtime = [await this.chClient.query(`SELECT avg(toFloat64OrNull(time)) AS time FROM Stats WHERE ad = '${id}'`)];
+            const stats = [await this.chClient.query(`SELECT action, count(*) AS total FROM Stats WHERE action IN ('open', 'close', 'mute', 'unmute', 'impression 10 sec', 'view', 'Watched to the end') AND ad = '${id}' GROUP BY action`)];
+            return stats.concat(avgtime);
+        } catch (error) {
+            console.error('Error fetching stats by ad id:', error);
+            return [];
+        }
     }
 
     async getStatsByPlatform(url: string) {
-        const avgtime = await this.chClient.find({
-            select: `avg(toFloat64OrNull(time)) AS time`,
-            where: `platform = '${url}'`
-        });
-        let stats = await this.chClient.find({
-            where: `action IN ('open', 'close', 'mute', 'unmute', 'impression 10 sec', 'view', 'Watched to the end') AND platform = '${url}'`,
-            select: `action, count(*) AS total`,
-            groupBy: 'action'
-        })
-        return stats.concat(avgtime);
+        try {
+            const avgtime = [await this.chClient.query(`SELECT avg(toFloat64OrNull(time)) AS time FROM Stats WHERE platform = '${url}'`)];
+            const stats = [await this.chClient.query(`SELECT action, count(*) AS total FROM Stats WHERE action IN ('open', 'close', 'mute', 'unmute', 'impression 10 sec', 'view', 'Watched to the end') AND platform = '${url}' GROUP BY action`)];
+            return stats.concat(avgtime);
+        } catch (error) {
+            console.error('Error fetching stats by platform:', error);
+            return [];
+        }
     }
 
     async getStatByPlatform(url: string, action: string) {
-        return await this.chClient.find({
-            where: `action IN ('${action}') AND platform = '${url}'`,
-            select: `action, count(*) AS total`,
-            groupBy: 'action'
-        })
+        try {
+            return await this.chClient.query(`SELECT action, count(*) AS total FROM Stats WHERE action IN ('${action}') AND platform = '${url}' GROUP BY action`);
+        } catch (error) {
+            console.error('Error fetching stat by platform:', error);
+            return [];
+        }
     }
+
     async getStatByAdId(id: string, action: string) {
-        return await this.chClient.find({
-            where: `action IN ('${action}') AND ad = '${id}'`,
-            select: `action, count(*) AS total`,
-            groupBy: 'action'
-        })
+        try {
+            return await this.chClient.query(`SELECT action, count(*) AS total FROM Stats WHERE action IN ('${action}') AND ad = '${id}' GROUP BY action`);
+        } catch (error) {
+            console.error('Error fetching stat by ad id:', error);
+            return [];
+        }
     }
+
     async recordStat(stat: Stat) {
-        const response = await this.chClient
-            .create({
-                id: ++this.countStats,
-                ad: stat.ad,
-                platform: stat.platform,
-                date: Date.now().toString(),
-                userdata: JSON.stringify(stat.userdata) || 'undefined',
-                action: stat.action,
-                time: String(stat.time) || null
-            })
-            .then(null, () => {this.countStats--});
-        return `Success create ${response}`;
+        try {
+            const response = await this.chClient.query(`INSERT INTO Stats (id, ad, platform, date, userdata, action, time) VALUES (${++this.countStats}, '${stat.ad}', '${stat.platform}', '${Date.now()}', '${JSON.stringify(stat.userdata) || 'undefined'}', '${stat.action}', ${stat.time || 'NULL'})`);
+            return `Success create ${response}`;
+        } catch (error) {
+            console.error('Error recording stat:', error);
+            this.countStats--;
+            return `Error: ${error.message}`;
+        }
     }
 }
