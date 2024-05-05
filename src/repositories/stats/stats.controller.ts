@@ -30,4 +30,8 @@ export class StatsController {
     recordStat(@Body() statDto: CreateStatDto) {
         return this.statsService.recordStat(statDto);
     }
+    @Get()
+    getAllStats() {
+        return this.statsService.getAllStats();
+    }
 }

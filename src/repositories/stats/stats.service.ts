@@ -59,6 +59,12 @@ export class StatsService {
             groupBy: 'action'
         })
     }
+    async getAllStats() {
+        return await this.chClient.find({
+            select: `action, count(*) AS total`,
+            groupBy: 'action'
+        })
+    }
     async recordStat(stat: Stat) {
         const response = await this.chClient
             .create({
