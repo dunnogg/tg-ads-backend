@@ -27,10 +27,6 @@ export class StatsController {
         return this.statsService.getStatByAdId(id, statname);
     }
 
-    @Get('all')
-    getAllStats() {
-        return this.statsService.getAllStats()
-    }
     @Post()
     recordStat(@Body() statDto: CreateStatDto) {
         return this.statsService.recordStat(statDto);
