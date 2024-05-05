@@ -26,6 +26,11 @@ export class StatsController {
     getAdStat(@Param('id') id: string, @Param('statname') statname: StatName) {
         return this.statsService.getStatByAdId(id, statname);
     }
+
+    @Get()
+    getAllStats() {
+        return this.statsService.getAllStats()
+    }
     @Post()
     recordStat(@Body() statDto: CreateStatDto) {
         return this.statsService.recordStat(statDto);
