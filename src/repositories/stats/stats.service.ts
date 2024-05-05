@@ -1,14 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Stat } from "./interfaces/stats.interface";
-import * as ClickHouse from "clickhouse";
+import {ClickHouseClient} from "@depyronick/nestjs-clickhouse";
+import * as process from "process";
 
 @Injectable()
 export class StatsService {
     private countStats: number;
 
     constructor(
-        @Inject()
-        private readonly chClient: ClickHouse,
+        @Inject(`${process.env.CLICKHOUSE_DB}`)
+        private readonly chClient: ClickHouseClient,
     ) {
         this.countStats = 0;
         this.initializeCountStats();
@@ -16,7 +17,7 @@ export class StatsService {
 
     private async initializeCountStats() {
         try {
-            const res = await this.chClient.query(`SELECT count(*) AS total FROM Stats`).toPromise();
+            const res = await this.chClient.query(`SELECT count(*) AS total FROM stats`);
             this.countStats = res[0].total;
         } catch (error) {
             console.error('Error initializing countStats:', error);
@@ -25,8 +26,8 @@ export class StatsService {
 
     async getStatsByAdId(id: string) {
         try {
-            const avgtime = await this.chClient.query(`SELECT avg(toFloat64OrNull(time)) AS time FROM Stats WHERE ad = '${id}'`).toPromise();
-            const stats = await this.chClient.query(`SELECT action, count(*) AS total FROM Stats WHERE action IN ('open', 'close', 'mute', 'unmute', 'impression 10 sec', 'view', 'Watched to the end') AND ad = '${id}' GROUP BY action`).toPromise();
+            const avgtime = [await this.chClient.query(`SELECT avg(toFloat64OrNull(time)) AS time FROM Stats WHERE ad = '${id}'`)];
+            const stats = [await this.chClient.query(`SELECT action, count(*) AS total FROM Stats WHERE action IN ('open', 'close', 'mute', 'unmute', 'impression 10 sec', 'view', 'Watched to the end') AND ad = '${id}' GROUP BY action`)];
             return stats.concat(avgtime);
         } catch (error) {
             console.error('Error fetching stats by ad id:', error);
@@ -36,8 +37,8 @@ export class StatsService {
 
     async getStatsByPlatform(url: string) {
         try {
-            const avgtime = await this.chClient.query(`SELECT avg(toFloat64OrNull(time)) AS time FROM Stats WHERE platform = '${url}'`).toPromise();
-            const stats = await this.chClient.query(`SELECT action, count(*) AS total FROM Stats WHERE action IN ('open', 'close', 'mute', 'unmute', 'impression 10 sec', 'view', 'Watched to the end') AND platform = '${url}' GROUP BY action`).toPromise();
+            const avgtime = [await this.chClient.query(`SELECT avg(toFloat64OrNull(time)) AS time FROM Stats WHERE platform = '${url}'`)];
+            const stats = [await this.chClient.query(`SELECT action, count(*) AS total FROM Stats WHERE action IN ('open', 'close', 'mute', 'unmute', 'impression 10 sec', 'view', 'Watched to the end') AND platform = '${url}' GROUP BY action`)];
             return stats.concat(avgtime);
         } catch (error) {
             console.error('Error fetching stats by platform:', error);
@@ -47,7 +48,7 @@ export class StatsService {
 
     async getStatByPlatform(url: string, action: string) {
         try {
-            return await this.chClient.query(`SELECT action, count(*) AS total FROM Stats WHERE action IN ('${action}') AND platform = '${url}' GROUP BY action`).toPromise();
+            return await this.chClient.query(`SELECT action, count(*) AS total FROM Stats WHERE action IN ('${action}') AND platform = '${url}' GROUP BY action`);
         } catch (error) {
             console.error('Error fetching stat by platform:', error);
             return [];
