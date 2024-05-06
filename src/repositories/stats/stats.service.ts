@@ -1,6 +1,6 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { StatsModel } from './entity/stats.entity';
-import { Stat } from "./interfaces/stats.interface";
+import {Inject, Injectable} from '@nestjs/common';
+import {StatsModel} from './entity/stats.entity';
+import {Stat} from "./interfaces/stats.interface";
 
 @Injectable()
 export class StatsService {
@@ -21,7 +21,7 @@ export class StatsService {
 
     async getStatsByAdId(id: string) {
         const avgtime = await this.chClient.find({
-            select: `avg(toFloat64OrNull(time)) AS  time`,
+            select: `avg(toFloat64OrNull(time)) AS time`,
             where: `ad = '${id}'`
         });
         let stats = await this.chClient.find({
@@ -30,6 +30,14 @@ export class StatsService {
             groupBy: 'action'
         })
         return stats.concat(avgtime);
+    }
+
+    async getAllAdsStats() {
+        return await this.chClient.find({
+            where: ` ad, groupArray((action, total)) AS stats, avg(toFloat64OrNull(time)) AS avgtime`,
+            select: `action IN ('open', 'close', 'mute', 'unmute', 'impression 10 sec', 'view', 'Watched to the end')`,
+            groupBy: 'ad'
+        });
     }
 
     async getStatsByPlatform(url: string) {

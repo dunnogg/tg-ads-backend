@@ -31,7 +31,7 @@ export class StatsController {
         return this.statsService.recordStat(statDto);
     }
     @Get()
-    getAllStats() {
-        return this.statsService.getAllStats();
+    getAllAdsStats() {
+        return this.statsService.getAllAdsStats();
     }
 }
