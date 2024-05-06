@@ -33,12 +33,14 @@ export class StatsService {
     }
 
     async getAllAdsStats() {
-        return await this.chClient.find({
-            where: ` ad, groupArray((action, total)) AS stats, avg(toFloat64OrNull(time)) AS avgtime`,
-            select: `action IN ('open', 'close', 'mute', 'unmute', 'impression 10 sec', 'view', 'Watched to the end')`,
-            groupBy: 'ad'
-        });
+        const query = {
+            where: `action IN ('open', 'close', 'mute', 'unmute', 'impression 10 sec', 'view', 'Watched to the end')`,
+            select: `ad, action, count(*) AS total, avg(toFloat64OrNull(time)) AS avgtime`,
+            groupBy: 'ad, action'
+        };
+        return await this.chClient.find(query);
     }
+
 
     async getStatsByPlatform(url: string) {
         const avgtime = await this.chClient.find({
