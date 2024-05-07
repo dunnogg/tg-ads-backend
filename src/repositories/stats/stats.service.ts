@@ -22,7 +22,7 @@ export class StatsService {
     async getStatsByAdId(id: string) {
         const avgtime = await this.chClient.find({
             select: `avg(toFloat64OrNull(time)) AS time`,
-            where: `ad = '${id}'`
+            where: `ad = '${id}' AND (action = 'Watched to the end' OR action = 'close')`
         });
         let stats = await this.chClient.find({
             where: `action IN ('open', 'close', 'mute', 'unmute', 'impression 10 sec', 'view', 'Watched to the end') AND ad = '${id}'`,
@@ -45,7 +45,7 @@ export class StatsService {
     async getStatsByPlatform(url: string) {
         const avgtime = await this.chClient.find({
             select: `avg(toFloat64OrNull(time)) AS time`,
-            where: `platform = '${url}'`
+            where: `platform = '${url}' AND (action = 'Watched to the end' OR action = 'close')`
         });
         let stats = await this.chClient.find({
             where: `action IN ('open', 'close', 'mute', 'unmute', 'impression 10 sec', 'view', 'Watched to the end') AND platform = '${url}'`,
