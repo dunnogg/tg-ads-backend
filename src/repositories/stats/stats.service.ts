@@ -74,7 +74,8 @@ export class StatsService {
                 platform: stat.platform,
                 userdata: JSON.stringify(stat.userdata) || 'undefined',
                 action: stat.action,
-                time: String(stat.time) || null
+                time: String(stat.time) || null,
+                userid: stat.userid
             })
             .then(null, () => {this.countStats--});
         return `Success create ${response}`;

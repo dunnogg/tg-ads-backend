@@ -6,6 +6,7 @@ export interface Stat {
     action: StatName;
     time: string;
     userdata: string;
+    userid: string
     ad: string;
     platform: string;
 }

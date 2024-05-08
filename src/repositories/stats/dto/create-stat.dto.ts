@@ -45,4 +45,10 @@ export class CreateStatDto {
         description: 'Date the event was recorded'
     })
     timestamp: number;
+    @ApiProperty({
+        example: '69195553240',
+        required: false,
+        description: 'User id'
+    })
+    userid: string;
 }

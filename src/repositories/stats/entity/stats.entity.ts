@@ -35,6 +35,11 @@ export class Stats {
     @Prop({
         type: DataType.String,
     })
+    public userid?: string;
+
+    @Prop({
+        type: DataType.String,
+    })
     public time?: string;
 
 }
