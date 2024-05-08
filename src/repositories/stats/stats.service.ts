@@ -60,9 +60,9 @@ export class StatsService {
             groupBy: 'action'
         })
     }
-    async getStatByUserIdAndAdId(userId: string, adId: string, action: string) {
+    async getStatByUserIdAndAdId(userId: string, action: string) {
         return await this.chClient.find({
-            where: `action IN ('${action}') AND userid = '${userId}' AND ad = '${adId}'`,
+            where: `action IN ('${action}') AND userid = '${userId}'`,
             select: `action, count(*) AS total`,
             groupBy: 'action'
         });
