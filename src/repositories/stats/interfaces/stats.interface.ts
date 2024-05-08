@@ -1,4 +1,4 @@
-export type StatName = 'open' | 'close' | 'mute' | 'unmute' | 'impression 10 sec' | 'view' | 'Watched to the end';
+export type StatName = 'open' | 'close' | 'mute' | 'unmute' | 'impression 10 sec' | 'view' | 'Watched to the end' | 'show';
 
 
 export interface Stat {

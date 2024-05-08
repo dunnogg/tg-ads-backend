@@ -12,6 +12,12 @@ export class StatsController {
     getAdStats(@Param('id') id: string) {
         return this.statsService.getStatsByAdId(id);
     }
+
+    @Get('ad/:id/:userid/:action')
+    getStatByUserIdAndAdId(@Param('id') id: string, @Param('userid') userid: string, @Param('action') action: string) {
+        console.log('Data >>>',userid, id, action)
+        return this.statsService.getStatByUserIdAndAdId(userid, id, action);
+    }
     @Get('platform/:url')
     getPlatformStats(@Param('url') url: string) {
         return this.statsService.getStatsByPlatform(url);
