@@ -75,7 +75,7 @@ export class StatsService {
                 userdata: JSON.stringify(stat.userdata) || 'undefined',
                 action: stat.action,
                 time: String(stat.time) || null,
-                userid: stat.userid
+                userid: String(stat.userid)
             })
             .then(null, () => {this.countStats--});
         return `Success create ${response}`;
