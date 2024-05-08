@@ -3,14 +3,14 @@ import {DataType, Model, Prop, Schema} from "@oneralon/nestjs-clickhouse";
 
 @Schema({
     tableName: 'stats',
-    options: 'ENGINE = MergeTree ORDER BY id',
+    options: 'ENGINE = MergeTree ORDER BY timestamp',
     autoCreate: true,
 })
 export class Stats {
     @Prop({
         type: DataType.UInt64,
     })
-    public id: number;
+    public timestamp: number;
 
     @Prop({
         type: DataType.String,
@@ -26,11 +26,6 @@ export class Stats {
         type: DataType.String,
     })
     public ad: string;
-
-    @Prop({
-        type: DataType.String,
-    })
-    public date: string;
 
     @Prop({
         type: DataType.String,

@@ -8,16 +8,7 @@ export class StatsService {
     constructor(
         @Inject('Stats')
         private readonly chClient: StatsModel,
-    ) {
-        this.countStats = 0;
-        this.chClient
-            .find({
-                select: `count(*) AS total`,
-            })
-            .then((res) => {
-                this.countStats = res[0]['total'];
-            });
-    }
+    ) {}
 
     async getStatsByAdId(id: string) {
         const avgtime = await this.chClient.find({
@@ -78,10 +69,9 @@ export class StatsService {
     async recordStat(stat: Stat) {
         const response = await this.chClient
             .create({
-                id: ++this.countStats,
+                timestamp: Date.now(),
                 ad: stat.ad,
                 platform: stat.platform,
-                date: Date.now().toString(),
                 userdata: JSON.stringify(stat.userdata) || 'undefined',
                 action: stat.action,
                 time: String(stat.time) || null

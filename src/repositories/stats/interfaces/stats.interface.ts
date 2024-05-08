@@ -2,6 +2,7 @@ export type StatName = 'open' | 'close' | 'mute' | 'unmute' | 'impression 10 sec
 
 
 export interface Stat {
+    timestamp: number;
     action: StatName;
     time: string;
     userdata: string;
