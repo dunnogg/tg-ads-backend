@@ -15,7 +15,6 @@ export class StatsController {
 
     @Get('ad/:id/:userid/:action')
     getStatByUserIdAndAdId(@Param('id') id: string, @Param('userid') userid: string, @Param('action') action: string) {
-        console.log('Data >>>',userid, id, action)
         return this.statsService.getStatByUserIdAndAdId(userid, id, action);
     }
     @Get('platform/:url')
