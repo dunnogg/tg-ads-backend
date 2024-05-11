@@ -1,6 +1,7 @@
 import {Inject, Injectable} from '@nestjs/common';
 import {StatsModel} from './entity/stats.entity';
 import {Stat} from "./interfaces/stats.interface";
+import {RedisService} from "../redis/redis.service";
 
 @Injectable()
 export class StatsService {
@@ -8,6 +9,7 @@ export class StatsService {
     constructor(
         @Inject('Stats')
         private readonly chClient: StatsModel,
+        private readonly redisService: RedisService,
     ) {}
 
     async getStatsByAdId(id: string) {
@@ -68,7 +70,27 @@ export class StatsService {
         });
     }
 
+    async getStatsData() {
+        const keys = await this.redisService.getKeys();
+
+        const statsByActions = {};
+
+        for (const key of keys) {
+            const [ad, action] = key.split(':');
+            const amount = await this.redisService.getAmount(key);
+
+            if (!statsByActions[ad]) {
+                statsByActions[ad] = {};
+            }
+            statsByActions[ad][action] = amount.toString();
+        }
+
+        return statsByActions;
+    }
+
     async recordStat(stat: Stat) {
+        await this.redisService.incrStat(stat.ad, stat.action);
+
         const response = await this.chClient
             .create({
                 timestamp: Date.now(),

@@ -28,6 +28,8 @@
     "@nestjs/swagger": "^7.3.1",
     "@oneralon/nestjs-clickhouse": "^1.0.0",
     "class-validator": "^0.14.1",
+    "dotenv": "^16.4.5",
+    "redis": "^4.6.13",
     "reflect-metadata": "^0.1.14",
     "rxjs": "^7.8.1"
   },

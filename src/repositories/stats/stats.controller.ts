@@ -35,6 +35,12 @@ export class StatsController {
     recordStat(@Body() statDto: CreateStatDto) {
         return this.statsService.recordStat(statDto);
     }
+
+    @Get('numbers')
+    getStatsData() {
+        return this.statsService.getStatsData();
+    }
+
     @Get()
     getAllAdsStats() {
         return this.statsService.getAllAdsStats();
