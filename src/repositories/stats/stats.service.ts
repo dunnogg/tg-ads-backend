@@ -16,7 +16,7 @@ export class StatsService {
             where: `ad = '${id}' AND (action = 'Watched to the end' OR action = 'close')`
         });
         let stats = await this.chClient.find({
-            where: `action IN ('open', 'close', 'mute', 'unmute', 'impression 10 sec', 'view', 'Watched to the end') AND ad = '${id}'`,
+            where: `action IN ('open', 'close', 'mute', 'unmute', 'impression', 'view', 'Watched to the end', 'show') AND ad = '${id}'`,
             select: `action, count(*) AS total`,
             groupBy: 'action'
         })
@@ -25,7 +25,7 @@ export class StatsService {
 
     async getAllAdsStats() {
         const query = {
-            where: `action IN ('open', 'close', 'mute', 'unmute', 'impression 10 sec', 'view', 'Watched to the end')`,
+            where: `action IN ('open', 'close', 'mute', 'unmute', 'impression', 'view', 'Watched to the end', 'show')`,
             select: `ad, action, count(*) AS total, avg(toFloat64OrNull(time)) AS avgtime`,
             groupBy: 'ad, action'
         };
@@ -39,7 +39,7 @@ export class StatsService {
             where: `platform = '${url}' AND (action = 'Watched to the end' OR action = 'close')`
         });
         let stats = await this.chClient.find({
-            where: `action IN ('open', 'close', 'mute', 'unmute', 'impression 10 sec', 'view', 'Watched to the end') AND platform = '${url}'`,
+            where: `action IN ('open', 'close', 'mute', 'unmute', 'impression', 'view', 'Watched to the end') AND platform = '${url}'`,
             select: `action, count(*) AS total`,
             groupBy: 'action'
         })
