@@ -77,7 +77,7 @@ export class StatsService {
         for (const key of keys) {
             console.log(key)
             const [ad, action] = key.split(':');
-            const amount = this.redisService.getAmount(key);
+            const amount = await this.redisService.getAmount(key);
             if (!statsByActions[ad]){
                 statsByActions[ad] = {}
             }
