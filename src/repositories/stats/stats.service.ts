@@ -75,7 +75,6 @@ export class StatsService {
         const statsByActions = {};
         const time = Date.now();
         for (const key of keys) {
-            console.log(key)
             const [ad, action] = key.split(':');
             const amount = await this.redisService.getAmount(key);
             if (!statsByActions[ad]){
@@ -84,7 +83,7 @@ export class StatsService {
 
             statsByActions[ad][action] = amount.toString();
         }
-        console.log(Date.now()-time)
+
         return statsByActions;
     }
 
