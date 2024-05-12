@@ -2,6 +2,10 @@ import {Inject, Injectable} from '@nestjs/common';
 import {StatsModel} from './entity/stats.entity';
 import {Stat} from "./interfaces/stats.interface";
 import {RedisService} from "../redis/redis.service";
+import { readFile, writeFile } from 'fs/promises'
+import { join } from 'path';
+import fs = require('fs')
+import process from "process";
 
 @Injectable()
 export class StatsService {
@@ -10,7 +14,9 @@ export class StatsService {
         @Inject('Stats')
         private readonly chClient: StatsModel,
         private readonly redisService: RedisService,
-    ) {}
+    ) {
+
+    }
 
     async getStatsByAdId(id: string) {
         const avgtime = await this.chClient.find({
@@ -71,24 +77,36 @@ export class StatsService {
     }
 
     async getStatsData() {
-        const keys = await this.redisService.getKeys();
+        const limits: Record<string, string> = JSON.parse(await readFile("./numbers.json", "utf8"));
         const statsByActions = {};
-        const time = Date.now();
-        for (const key of keys) {
+
+        for (const [key, amount] of Object.entries(limits)) {
             const [ad, action] = key.split(':');
-            const amount = await this.redisService.getAmount(key);
             if (!statsByActions[ad]){
                 statsByActions[ad] = {}
             }
 
-            statsByActions[ad][action] = amount.toString();
+            statsByActions[ad][action] = amount;
         }
 
         return statsByActions;
     }
 
     async recordStat(stat: Stat) {
+        if (!fs.existsSync("./numbers.json")){
+            fs.writeFileSync("./numbers.json", JSON.stringify({}),'utf8')
+        }
+
         await this.redisService.incrStat(stat.ad, stat.action);
+        const limits: Record<string, string> = JSON.parse(await readFile("./numbers.json", "utf8"));
+
+        if (limits[stat.ad+':'+stat.action]) {
+            limits[stat.ad+':'+stat.action] = (Number(limits[stat.ad+':'+stat.action]) + 1).toString();
+        } else {
+            limits[stat.ad+':'+stat.action] = '1';
+        }
+
+        await writeFile("./numbers.json", JSON.stringify(limits), 'utf8');
 
         const response = await this.chClient
             .create({
