@@ -4,10 +4,10 @@ import { StatsController } from './stats.controller';
 import { ClickHouseModule } from '@oneralon/nestjs-clickhouse';
 import { Stats } from './entity/stats.entity';
 import {RedisService} from "../redis/redis.service";
-import {RedisModule} from "../redis/redis.module";
+import {Redis} from "../redis/redis.module";
 
 @Module({
-    imports: [ClickHouseModule.forFeature([Stats]), RedisModule],
+    imports: [ClickHouseModule.forFeature([Stats]), Redis],
     controllers: [StatsController],
     providers: [StatsService, RedisService],
     exports: [StatsModule],

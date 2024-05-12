@@ -72,19 +72,19 @@ export class StatsService {
 
     async getStatsData() {
         const keys = await this.redisService.getKeys();
-
         const statsByActions = {};
-
+        const time = Date.now();
         for (const key of keys) {
+            console.log(key)
             const [ad, action] = key.split(':');
-            const amount = await this.redisService.getAmount(key);
-
-            if (!statsByActions[ad]) {
-                statsByActions[ad] = {};
+            const amount = this.redisService.getAmount(key);
+            if (!statsByActions[ad]){
+                statsByActions[ad] = {}
             }
+
             statsByActions[ad][action] = amount.toString();
         }
-
+        console.log(Date.now()-time)
         return statsByActions;
     }
 

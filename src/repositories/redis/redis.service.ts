@@ -1,18 +1,15 @@
-import {Inject, Injectable} from '@nestjs/common';
-import {RedisClientType, RedisFunctions, RedisModules, RedisScripts} from 'redis';
+import {Injectable} from '@nestjs/common';
 import {StatName} from "../stats/interfaces/stats.interface";
+import {InjectRedis} from "@nestjs-modules/ioredis";
+import Redis from "ioredis";
 
 @Injectable()
 export class RedisService {
-    private readonly redis: RedisClientType<
-        RedisModules,
-        RedisFunctions,
-        RedisScripts
-    >;
+    private readonly redis: Redis
 
     constructor(
-        @Inject('REDIS_CLIENT')
-            redisClient: RedisClientType<RedisModules, RedisFunctions, RedisScripts>,
+        @InjectRedis()
+            redisClient: Redis,
     ) {
         this.redis = redisClient;
     }
