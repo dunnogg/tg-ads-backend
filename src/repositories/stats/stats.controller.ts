@@ -37,12 +37,14 @@ export class StatsController {
     }
 
     @Get('numbers')
-    getStatsData() {
-        return this.statsService.getStatsData();
+    async getStatsData() {
+        const data = await this.statsService.getDataFromRedis();
+
+        return data;
     }
 
     @Get()
     getAllAdsStats() {
-        return this.statsService.getAllAdsStats();
+        return this.statsService.getDataFromRedis();
     }
 }

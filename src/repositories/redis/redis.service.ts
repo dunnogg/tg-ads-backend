@@ -14,17 +14,16 @@ export class RedisService {
         this.redis = redisClient;
     }
 
-    async getKeys() {
-        return await this.redis.keys('*');
-    }
+    async getData(){
+        const keys = await this.redis.keys('*');
+        const data = await this.redis.mget(keys);
 
-    async getAmount(key: string) {
-        return await this.redis.get(key);
+        return [keys, data]
     }
 
     async incrStat(adId: string, action: StatName) {
         const key = `${adId}:${action}`;
 
-        return await this.redis.incr(key);
+        return this.redis.incr(key);
     }
 }
