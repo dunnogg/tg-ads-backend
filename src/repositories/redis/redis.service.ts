@@ -1,33 +1,29 @@
-import {Inject, Injectable} from '@nestjs/common';
-import {RedisClientType, RedisFunctions, RedisModules, RedisScripts} from 'redis';
+import {Injectable} from '@nestjs/common';
 import {StatName} from "../stats/interfaces/stats.interface";
+import {InjectRedis} from "@nestjs-modules/ioredis";
+import Redis from "ioredis";
 
 @Injectable()
 export class RedisService {
-    private readonly redis: RedisClientType<
-        RedisModules,
-        RedisFunctions,
-        RedisScripts
-    >;
+    private readonly redis: Redis
 
     constructor(
-        @Inject('REDIS_CLIENT')
-            redisClient: RedisClientType<RedisModules, RedisFunctions, RedisScripts>,
+        @InjectRedis()
+            redisClient: Redis,
     ) {
         this.redis = redisClient;
     }
 
-    async getKeys() {
-        return await this.redis.keys('*');
-    }
+    async getData(){
+        const keys = await this.redis.keys('*');
+        const data = await this.redis.mget(keys);
 
-    async getAmount(key: string) {
-        return await this.redis.get(key);
+        return [keys, data]
     }
 
     async incrStat(adId: string, action: StatName) {
         const key = `${adId}:${action}`;
 
-        return await this.redis.incr(key);
+        return this.redis.incr(key);
     }
 }

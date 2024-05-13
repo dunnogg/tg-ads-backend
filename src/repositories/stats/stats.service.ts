@@ -3,14 +3,35 @@ import {StatsModel} from './entity/stats.entity';
 import {Stat} from "./interfaces/stats.interface";
 import {RedisService} from "../redis/redis.service";
 
+
 @Injectable()
 export class StatsService {
     private countStats:  number;
+    private recordedData: Record<string, string> = {};
     constructor(
         @Inject('Stats')
         private readonly chClient: StatsModel,
         private readonly redisService: RedisService,
-    ) {}
+    ) {
+    }
+
+    async getDataFromRedis() {
+        const time = Date.now()
+        const [keys, data] = await this.redisService.getData();
+        const statsByActions = {};
+
+        for (let i = 0; i<keys.length; i++) {
+            const [ad, action] = keys[i].split(':');
+
+            if (!statsByActions[ad]) {
+                statsByActions[ad] = {};
+            }
+
+            statsByActions[ad][action] = data[i];
+        }
+        console.log(Date.now() - time)
+        return statsByActions;
+    }
 
     async getStatsByAdId(id: string) {
         const avgtime = await this.chClient.find({
@@ -34,7 +55,6 @@ export class StatsService {
         return await this.chClient.find(query);
     }
 
-
     async getStatsByPlatform(url: string) {
         const avgtime = await this.chClient.find({
             select: `avg(toFloat64OrNull(time)) AS time`,
@@ -55,6 +75,7 @@ export class StatsService {
             groupBy: 'action'
         })
     }
+
     async getStatByAdId(id: string, action: string) {
         return await this.chClient.find({
             where: `action IN ('${action}') AND ad = '${id}'`,
@@ -62,30 +83,13 @@ export class StatsService {
             groupBy: 'action'
         })
     }
+
     async getStatByUserId(userId: string, action: string) {
         return await this.chClient.find({
             where: `action IN ('${action}') AND userid = '${userId}'`,
             select: `ad, action, count(*) AS total`,
             groupBy: 'ad, action'
         });
-    }
-
-    async getStatsData() {
-        const keys = await this.redisService.getKeys();
-
-        const statsByActions = {};
-
-        for (const key of keys) {
-            const [ad, action] = key.split(':');
-            const amount = await this.redisService.getAmount(key);
-
-            if (!statsByActions[ad]) {
-                statsByActions[ad] = {};
-            }
-            statsByActions[ad][action] = amount.toString();
-        }
-
-        return statsByActions;
     }
 
     async recordStat(stat: Stat) {

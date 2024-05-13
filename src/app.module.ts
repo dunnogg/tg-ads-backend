@@ -5,7 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ClickHouseModule } from "@oneralon/nestjs-clickhouse";
 import * as process from "process";
 import {StatsModule} from "./repositories/stats/stats.module";
-import {RedisModule} from "./repositories/redis/redis.module";
+import {Redis} from "./repositories/redis/redis.module";
 
 @Module({
   imports: [
@@ -18,7 +18,7 @@ import {RedisModule} from "./repositories/redis/redis.module";
       username: `${process.env.CLICKHOUSE_USER}`,
       password: `${process.env.CLICKHOUSE_PASSWORD}`,
       database: `${process.env.CLICKHOUSE_DB}`,
-      debug: true,
+      debug: false,
       useGzip: true,
       format: 'json',
     }),
