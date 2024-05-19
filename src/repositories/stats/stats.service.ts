@@ -1,7 +1,8 @@
 import {Inject, Injectable} from '@nestjs/common';
 import {StatsModel} from './entity/stats.entity';
 import {Stat} from "./interfaces/stats.interface";
-import {RedisService} from "../redis/redis.service";
+import {statsRedisService} from "../statsRedis/statsRedis.service";
+import {geoRedisService} from "../geoRedis/geoRedis.service";
 
 
 @Injectable()
@@ -11,12 +12,12 @@ export class StatsService {
     constructor(
         @Inject('Stats')
         private readonly chClient: StatsModel,
-        private readonly redisService: RedisService,
+        private readonly redisService: statsRedisService,
+        private readonly redisIpService: geoRedisService
     ) {
     }
 
     async getDataFromRedis() {
-        const time = Date.now()
         const [keys, data] = await this.redisService.getData();
         const statsByActions = {};
 
@@ -29,7 +30,6 @@ export class StatsService {
 
             statsByActions[ad][action] = data[i];
         }
-        console.log(Date.now() - time)
         return statsByActions;
     }
 
@@ -44,15 +44,6 @@ export class StatsService {
             groupBy: 'action'
         })
         return stats.concat(avgtime);
-    }
-
-    async getAllAdsStats() {
-        const query = {
-            where: `action IN ('open', 'close', 'mute', 'unmute', 'impression', 'view', 'Watched to the end')`,
-            select: `ad, action, count(*) AS total, avg(toFloat64OrNull(time)) AS avgtime`,
-            groupBy: 'ad, action'
-        };
-        return await this.chClient.find(query);
     }
 
     async getStatsByPlatform(url: string) {
@@ -108,4 +99,20 @@ export class StatsService {
             .then(null, () => {this.countStats--});
         return `Success create ${response}`;
     }
+    async getIpData(ip: string, userId: string) {
+        const data = await this.redisIpService.getIpInfo(userId)
+        if (!data || (data['query'] !== ip)) {
+            const response = await fetch(`http://ip-api.com/json/${ip}?fields=status,message,country,countryCode,region,regionName,city,zip,lat,lon,timezone,mobile,proxy,hosting,query`)
+            const ipInfo = await response.json()
+            try {
+                this.redisIpService.addIpInfo(ipInfo, userId)
+            } catch (e) {
+                console.error(e)
+            }
+            return ipInfo
+        }
+        else {
+            return data
+        }
+    };
 }

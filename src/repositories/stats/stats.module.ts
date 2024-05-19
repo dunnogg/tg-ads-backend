@@ -3,13 +3,15 @@ import { Module } from '@nestjs/common';
 import { StatsController } from './stats.controller';
 import { ClickHouseModule } from '@oneralon/nestjs-clickhouse';
 import { Stats } from './entity/stats.entity';
-import {RedisService} from "../redis/redis.service";
-import {Redis} from "../redis/redis.module";
+import {statsRedisService} from "../statsRedis/statsRedis.service";
+import {statsRedis} from "../statsRedis/statsRedis.module";
+import {geoRedis} from "../geoRedis/geoRedis.module";
+import {geoRedisService} from "../geoRedis/geoRedis.service";
 
 @Module({
-    imports: [ClickHouseModule.forFeature([Stats]), Redis],
+    imports: [ClickHouseModule.forFeature([Stats]), statsRedis, geoRedis],
     controllers: [StatsController],
-    providers: [StatsService, RedisService],
+    providers: [StatsService, statsRedisService, geoRedisService],
     exports: [StatsModule],
 })
 export class StatsModule {}

@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
-import { StatsService } from './stats.service';
+import {Body, Controller, Get, Param, Post} from '@nestjs/common';
+import {StatsService} from './stats.service';
 import {CreateStatDto} from './dto/create-stat.dto';
 import {StatName} from "./interfaces/stats.interface";
 
@@ -38,13 +38,15 @@ export class StatsController {
 
     @Get('numbers')
     async getStatsData() {
-        const data = await this.statsService.getDataFromRedis();
-
-        return data;
+        return await this.statsService.getDataFromRedis();
     }
 
     @Get()
     getAllAdsStats() {
         return this.statsService.getDataFromRedis();
+    }
+    @Get('geo/:id/:ip')
+    getIpData(@Param('id') id: string, @Param('ip') ip: string){
+        return this.statsService.getIpData(ip, id)
     }
 }
