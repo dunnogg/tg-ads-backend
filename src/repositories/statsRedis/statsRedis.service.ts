@@ -4,7 +4,7 @@ import {InjectRedis} from "@nestjs-modules/ioredis";
 import Redis from "ioredis";
 
 @Injectable()
-export class RedisService {
+export class statsRedisService {
     private readonly redis: Redis
 
     constructor(
