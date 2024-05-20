@@ -3,6 +3,7 @@ import {StatsModel} from './entity/stats.entity';
 import {Stat} from "./interfaces/stats.interface";
 import {statsRedisService} from "../statsRedis/statsRedis.service";
 import {geoRedisService} from "../geoRedis/geoRedis.service";
+import {creativeRedisService} from "../creativeRedis/creativeRedis.service";
 
 
 @Injectable()
@@ -13,7 +14,8 @@ export class StatsService {
         @Inject('Stats')
         private readonly chClient: StatsModel,
         private readonly redisService: statsRedisService,
-        private readonly redisIpService: geoRedisService
+        private readonly redisIpService: geoRedisService,
+        private readonly redisCreo: creativeRedisService
     ) {
     }
 
@@ -115,4 +117,10 @@ export class StatsService {
             return data
         }
     };
+    async getCreative(id: string) {
+        return this.redisCreo.getCreative(id)
+    }
+    async addCreative(id: string, xml: any) {
+        return this.redisCreo.addCreative(id, xml)
+    }
 }

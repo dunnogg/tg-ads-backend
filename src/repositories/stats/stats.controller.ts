@@ -1,7 +1,8 @@
-import {Body, Controller, Get, Param, Post} from '@nestjs/common';
+import {Body, Controller, Get, Param, Post, Response} from '@nestjs/common';
 import {StatsService} from './stats.service';
 import {CreateStatDto} from './dto/create-stat.dto';
 import {StatName} from "./interfaces/stats.interface";
+import {CreativeDto} from "../creativeRedis/dto/creative.dto";
 
 @Controller('stats')
 export class StatsController {
@@ -48,5 +49,15 @@ export class StatsController {
     @Get('geo/:id/:ip')
     getIpData(@Param('id') id: string, @Param('ip') ip: string){
         return this.statsService.getIpData(ip, id)
+    }
+    @Get('creative/:id')
+    async getCreative(@Param('id') id: string, @Response() res){
+        const creative = await this.statsService.getCreative(id)
+        res.set('Content-Type', 'text/xml');
+        res.send(creative);
+    }
+    @Post('creative')
+    addCreative(@Body() creativeDto: CreativeDto){
+        return this.statsService.addCreative(creativeDto.id, creativeDto.xmlData)
     }
 }
