@@ -7,11 +7,13 @@ import {statsRedisService} from "../statsRedis/statsRedis.service";
 import {statsRedis} from "../statsRedis/statsRedis.module";
 import {geoRedis} from "../geoRedis/geoRedis.module";
 import {geoRedisService} from "../geoRedis/geoRedis.service";
+import {creativeRedisService} from "../creativeRedis/creativeRedis.service";
+import {creoRedis} from "../creativeRedis/creativeRedis.module";
 
 @Module({
-    imports: [ClickHouseModule.forFeature([Stats]), statsRedis, geoRedis],
+    imports: [ClickHouseModule.forFeature([Stats]), statsRedis, geoRedis,creoRedis],
     controllers: [StatsController],
-    providers: [StatsService, statsRedisService, geoRedisService],
+    providers: [StatsService, statsRedisService, geoRedisService, creativeRedisService],
     exports: [StatsModule],
 })
 export class StatsModule {}
