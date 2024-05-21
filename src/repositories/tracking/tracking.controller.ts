@@ -9,8 +9,8 @@ export class TrackingController {
     async getStatsData() {
         return await this.statsService.getDataFromRedis();
     }
-    @Post(':adid/:userid/:action/:time')
-    addStat(@Param('adid') adid: string, @Param('userid') userid: string, @Param('action') action: ActionName, @Param('time') time: string ){
-        return this.statsService.recordStat(adid, userid, action, time, origin)
+    @Post(':adid/:userid/:action')
+    addStat(@Headers('origin') origin: string, @Param('adid') adid: string, @Param('userid') userid: string, @Param('action') action: ActionName){
+        return this.statsService.recordStat(adid, userid, action, origin)
     }
 }
