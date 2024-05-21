@@ -104,7 +104,7 @@ export class StatsService {
     async getIpData(ip: string, userId: string) {
         const data = await this.redisIpService.getIpInfo(userId)
         if (!data || (data['query'] !== ip)) {
-            const response = await fetch(`http://ip-api.com/json/${ip}?fields=status,message,country,countryCode,region,regionName,city,zip,lat,lon,timezone,mobile,proxy,hosting,query`)
+            const response = await fetch(`https://pro.ip-api.com/json/${ip}?fields=status,message,country,countryCode,region,regionName,city,zip,lat,lon,timezone,mobile,proxy,hosting,query&key=e1vbLMpdFsk5iyy`)
             const ipInfo = await response.json()
             try {
                 this.redisIpService.addIpInfo(ipInfo, userId)
