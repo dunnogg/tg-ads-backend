@@ -4,21 +4,19 @@ import { config } from 'dotenv'
 import Redis from "ioredis";
 
 config()
-
-const redisGeo = {
-    provide: 'geo',
-    useFactory: () => new Redis('redis://default:QUh0WFWRCJjMJLlFNo7tE2L35Yz5a6gA@redis-17519.c55.eu-central-1-1.ec2.redns.redis-cloud.com:17519'),
+const redisTracking = {
+    provide: 'tracking',
+    useFactory: () => new Redis('redis://default:nJagDp5CKIyNVTp2bJYNU7cwPI66XkjB@redis-11174.c14.us-east-1-3.ec2.redns.redis-cloud.com:11174'),
 };
-
 @Module({
-    providers: [redisGeo],
+    providers: [redisTracking],
     imports: [RedisModule.forRootAsync({
         useFactory: ()=> ({
             type: 'single',
-            url: `redis://default:QUh0WFWRCJjMJLlFNo7tE2L35Yz5a6gA@redis-17519.c55.eu-central-1-1.ec2.redns.redis-cloud.com:17519`,
+            url: `redis://default:nJagDp5CKIyNVTp2bJYNU7cwPI66XkjB@redis-11174.c14.us-east-1-3.ec2.redns.redis-cloud.com:11174`,
         })
         // url: `statsRedis://${process.env.REDIS_USERNAME}:${process.env.REDIS_PASSWORD}@${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`
     })],
-    exports: [RedisModule, redisGeo],
+    exports: [RedisModule,redisTracking],
 })
-export class geoRedis {}
+export class trackingRedis {}

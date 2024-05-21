@@ -1,17 +1,16 @@
-import {Injectable} from '@nestjs/common';
-import {StatName} from "../stats/interfaces/stats.interface";
+import {Inject, Injectable} from '@nestjs/common';
 import {InjectRedis} from "@nestjs-modules/ioredis";
 import Redis from "ioredis";
 
 @Injectable()
-export class statsRedisService {
+export class trackingRedisService {
     private readonly redis: Redis
 
     constructor(
-        @InjectRedis()
-            redisClient: Redis,
+        @Inject('tracking')
+        private readonly redisTracking: Redis,
     ) {
-        this.redis = redisClient;
+        this.redis = redisTracking;
     }
 
     async getData(){
@@ -23,7 +22,6 @@ export class statsRedisService {
 
     async incrStat(adId: string, action: string) {
         const key = `${adId}:${action}`;
-
         return this.redis.incr(key);
     }
 }
