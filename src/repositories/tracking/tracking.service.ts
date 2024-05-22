@@ -27,27 +27,7 @@ export class TrackingService {
         }
         return statsByActions;
     }
-    async recordStat(adid: string, userid: string, eventAction: ActionName, platform: string) {
-        await this.redisService.incrStat(adid, eventAction);
-        let time = 15.0
-        if (eventAction === 'firstQuartile') {
-            time = time / 4
-        }
-        if (eventAction === 'midpoint') {
-            time = time / 2
-        }
-        if (eventAction === 'thirdQuartile') {
-            time = time * 0.75
-        }
-        const response = await this.chClient
-            .create({
-                timestamp: Date.now(),
-                ad: adid,
-                platform: platform,
-                action: eventAction,
-                time: String(time) || null,
-                userid: String(userid)
-            })
-        return `Success create ${response}`;
+    async recordStat(adid: string, userid: string, eventAction: ActionName) {
+        return `Success create ${eventAction}`;
     }
 }

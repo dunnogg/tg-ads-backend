@@ -21,7 +21,7 @@ export class statsRedisService {
         return [keys, data]
     }
 
-    async incrStat(adId: string, action: string) {
+    async incrStat(adId: string, action: StatName) {
         const key = `${adId}:${action}`;
 
         return this.redis.incr(key);

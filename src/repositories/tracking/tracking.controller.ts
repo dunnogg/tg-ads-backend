@@ -10,7 +10,7 @@ export class TrackingController {
         return await this.statsService.getDataFromRedis();
     }
     @Post(':adid/:userid/:action')
-    addStat(@Headers('origin') origin: string, @Param('adid') adid: string, @Param('userid') userid: string, @Param('action') action: ActionName){
-        return this.statsService.recordStat(adid, userid, action, origin)
+    addStat(@Param('adid') adid: string, @Param('userid') userid: string, @Param('action') action: ActionName){
+        return this.statsService.recordStat(adid, userid, action)
     }
 }

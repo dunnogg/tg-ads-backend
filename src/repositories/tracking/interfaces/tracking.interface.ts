@@ -1,4 +1,22 @@
-export type ActionName = 'start' | 'firstQuartile' | 'midpoint' | 'thirdQuartile' | 'complete' | 'pause' | 'resume' | 'rewind' | 'skip' | 'mute' | 'unmute' | 'fullscreen' | 'exitFullscreen' | 'expand' | 'collapse' | 'acceptInvitation' | 'close ';
+export enum ActionName {
+    Start = 'start',
+    FirstQuartile = 'firstQuartile',
+    Midpoint = 'midpoint',
+    ThirdQuartile = 'thirdQuartile',
+    Complete = 'complete',
+    Pause = 'pause',
+    Resume = 'resume',
+    Rewind = 'rewind',
+    Skip = 'skip',
+    Mute = 'mute',
+    Unmute = 'unmute',
+    Fullscreen = 'fullscreen',
+    ExitFullscreen = 'exitFullscreen',
+    Expand = 'expand',
+    Collapse = 'collapse',
+    AcceptInvitation = 'acceptInvitation',
+    Close = 'close'
+}
 
 
 export interface Track {
