@@ -15,6 +15,10 @@ services:
       - gateway
     env_file:
       - .env
+    environment:
+      - REDIS_TRACKING=${REDIS_TRACKING}
+      - REDIS_STATS=${REDIS_STATS}
+      - REDIS_GEO=${REDIS_GEO}
   clickhouse:
     image: clickhouse/clickhouse-server
     ports:
