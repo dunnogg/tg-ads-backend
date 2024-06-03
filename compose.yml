@@ -47,8 +47,6 @@ services:
       - rdsdata:/root/redis
       - cache:/data
     environment:
-      - REDIS_CONNECTION=${REDIS_CONNECTION}
-      - REDIS_PORT=${REDIS_PORT}
       - REDIS_PASSWORD=1234
       - REDIS_DATABASES=16
     networks:
