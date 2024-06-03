@@ -28,12 +28,14 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^7.3.1",
     "@oneralon/nestjs-clickhouse": "^1.0.0",
+    "bullmq": "^5.7.14",
     "class-validator": "^0.14.1",
     "dotenv": "^16.4.5",
     "ioredis": "^5.4.1",
     "redis": "^4.6.13",
     "reflect-metadata": "^0.1.14",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
@@ -43,6 +45,7 @@
     "@types/jest": "^29.5.2",
     "@types/node": "^20.3.1",
     "@types/supertest": "^6.0.0",
+    "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "eslint": "^8.42.0",

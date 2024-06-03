@@ -1,0 +1,27 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tgadsbackend
+  template:
+    metadata:
+      labels:
+        app: tgadsbackend
+    spec:
+      containers:
+        - name: app
+          image: your-docker-registry/tgadsbackend:latest
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - secretRef:
+                name: app-secrets
+    restartPolicy: Always
+---
