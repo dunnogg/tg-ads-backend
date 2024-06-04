@@ -20,6 +20,7 @@ services:
       - REDIS_TRACKING=${REDIS_TRACKING}
       - REDIS_STATS=${REDIS_STATS}
       - REDIS_GEO=${REDIS_GEO}
+      - REDIS_CHCACHE=${REDIS_CHCACHE}
   clickhouse:
     image: clickhouse/clickhouse-server
     ports:

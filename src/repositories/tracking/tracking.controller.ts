@@ -3,17 +3,17 @@ import {TrackingService} from './tracking.service';
 import {ActionName} from "./interfaces/tracking.interface";
 import {BullmqService} from "../../bullmq/bullmq.service";
 import {BullmqFactory} from "../../bullmq/bullmq.factory";
+import {batchRedisService} from "../batchRedis/batchRedis.service";
 
 @Controller('tracking')
 export class TrackingController {
-    private buffer: any[] = [];
-    private readonly bufferSize: number = 10;
+    private readonly bufferSize: number = 5;
     private BullMqUserService: BullmqService;
     private BullMqPlatformService: BullmqService;
     private BullMqbatchService: BullmqService;
     private BullMqAdService: BullmqService;
 
-    constructor(private readonly statsService: TrackingService, private readonly bullmqFactory: BullmqFactory) {
+    constructor(private readonly statsService: TrackingService,private readonly batchService: batchRedisService, private readonly bullmqFactory: BullmqFactory) {
         this.BullMqUserService = this.bullmqFactory.create('getUserData')
         this.BullMqAdService = this.bullmqFactory.create('getAdData')
         this.BullMqPlatformService = this.bullmqFactory.create('getPlatformData')
@@ -39,37 +39,48 @@ export class TrackingController {
         return (await this.BullMqAdService.addJobWithResponse({ad: ad}))
     }
     @Get(':adid/:userid/:action')
-    async addStat(@Request() req: Request, @Param('adid') adid: string, @Param('userid') userid: string, @Param('action') action: ActionName) {
-        /*return this.statsService.recordStat(adid, userid, action, req.headers['host'])*/
-        let time = undefined
-        if (action === 'start') {
-            time = 0
+    async addStat(
+        @Request() req: Request,
+        @Param('adid') adid: string,
+        @Param('userid') userid: string,
+        @Param('action') action: ActionName
+    ) {
+        let time = 'undefined';
+
+        switch (action) {
+            case 'start':
+                time = '0';
+                break;
+            case 'firstQuartile':
+                time = String(Math.round(15 / 4));
+                break;
+            case 'midpoint':
+                time = String(Math.round(15 / 2));
+                break;
+            case 'thirdQuartile':
+                time = String(Math.round((15 / 4) * 3));
+                break;
+            case 'complete':
+                time = '15';
+                break;
         }
-        if (action === 'firstQuartile') {
-            time = Math.round(15 / 4)
-        }
-        if (action === 'midpoint') {
-            time = Math.round(15 / 2)
-        }
-        if (action === 'thirdQuartile') {
-            time = Math.round(((15 / 4) * 3))
-        }
-        if (action === 'complete') {
-            time = 15
-        }
-        this.buffer.push({
-            timestamp: Date.now(),
-            ad: adid,
-            platform: req.headers['host'],
-            time: String(time),
-            action: action,
-            userid: String(userid),
+
+        setImmediate(async () => {
+            await this.batchService.incrStat({
+                ad: adid,
+                action: action,
+                userid: userid,
+                platform: req.headers['host'],
+                timestamp: Date.now(),
+                time: String(time)
+            });
+            const buffer = await this.batchService.getData();
+            if (buffer.length >= this.bufferSize) {
+                await this.batchService.flushDB();
+                await this.BullMqbatchService.addJob(buffer);
+            }
         });
-        if (this.buffer.length >= this.bufferSize) {
-            const bufferCopy = [...this.buffer];
-            this.buffer = [];
-            await this.BullMqbatchService.addJob(bufferCopy);
-        }
-        return 'Success Added'
+
+        return 'Success Added';
     }
 }

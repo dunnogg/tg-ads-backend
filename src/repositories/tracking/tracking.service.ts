@@ -2,17 +2,19 @@ import {Inject, Injectable} from '@nestjs/common';
 import {TrackModel} from './entity/tracking.entity';
 import {trackingRedisService} from "../trackingRedis/trackingRedis.service";
 import {getFormattedData} from "./utils/getFormattedData";
+import {addDelayedJob} from "bullmq/dist/esm/scripts";
 
 
 @Injectable()
 export class TrackingService {
-    private buffer: any[] = [];
-    private readonly bufferSize: number = 200;
     constructor(
         @Inject('Tracking')
         private readonly chClient: TrackModel,
         private readonly redisService: trackingRedisService,
+
     ) {
+        this.redisService = redisService;
+
     }
     async getDataFromRedis() {
         const [keys, data] = await this.redisService.getData();

@@ -6,11 +6,13 @@ import {Tracking} from "./entity/tracking.entity";
 import {trackingRedisService} from "../trackingRedis/trackingRedis.service";
 import {trackingRedis} from "../trackingRedis/trackingRedis.module";
 import {BullmqFactory} from "../../bullmq/bullmq.factory";
+import {batchRedisService} from "../batchRedis/batchRedis.service";
+import {batchRedis} from "../batchRedis/batchRedis.module";
 
 @Module({
-    imports: [ClickHouseModule.forFeature([Tracking]), trackingRedis],
+    imports: [ClickHouseModule.forFeature([Tracking]), trackingRedis, batchRedis],
     controllers: [TrackingController],
-    providers: [TrackingService,trackingRedisService, BullmqFactory],
+    providers: [TrackingService,trackingRedisService, BullmqFactory, batchRedisService],
     exports: [TrackingModule],
 })
 export class TrackingModule implements OnModuleInit {

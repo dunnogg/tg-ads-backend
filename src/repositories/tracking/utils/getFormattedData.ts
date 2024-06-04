@@ -1,6 +1,8 @@
-export async function getFormattedData(keys, data) {
+export async function getFormattedData(keys: any[], data: any[]) {
     const statsByActions = {};
-
+    if (keys === undefined) {
+        return
+    }
     for (let i = 0; i < keys.length; i++) {
         const [ad, action, userid, host] = keys[i].split(':');
 

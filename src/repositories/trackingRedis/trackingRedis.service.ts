@@ -43,16 +43,12 @@ export class trackingRedisService {
         let cursor = '0';
         const keys: string[] = [];
         const pattern = `*:${userid}:*`;
-
         do {
             const result = await this.redis.scan(cursor, 'MATCH', pattern, 'COUNT', '1000');
             cursor = result[0];
             keys.push(...result[1]);
         } while (cursor !== '0');
 
-        if (keys.length === 0) {
-            return [undefined, undefined];
-        }
 
         const pipeline = this.redis.pipeline();
         keys.forEach(key => {
