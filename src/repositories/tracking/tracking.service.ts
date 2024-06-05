@@ -45,8 +45,8 @@ export class TrackingService {
         return getFormattedData(keys, data)
     }
     async recordStat(JobData: any) {
-        this.redisService.incrStats(JobData);
-        const response = await this.chClient.insertMany(JobData)
-        return `Success create ${response}`;
+        const response = await this.redisService.incrStats(JobData);
+        /*const response = await this.chClient.insertMany(JobData)*/
+        return `Success create`;
     }
 }

@@ -64,20 +64,19 @@ export class TrackingController {
                 time = '15';
                 break;
         }
-
         setImmediate(async () => {
             await this.batchService.incrStat({
                 ad: adid,
                 action: action,
                 userid: userid,
-                platform: req.headers['host'],
+                platform: req.headers['referer'],
                 timestamp: Date.now(),
                 time: String(time)
             });
             const buffer = await this.batchService.getData();
             if (buffer.length >= this.bufferSize) {
-                await this.batchService.flushDB();
-                await this.BullMqbatchService.addJob(buffer);
+                this.batchService.flushDB();
+                this.BullMqbatchService.addJob(buffer);
             }
         });
 
