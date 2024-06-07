@@ -88,18 +88,19 @@ export class StatsService {
     async recordStat(stat: Stat) {
         await this.redisService.incrStat(stat.ad, stat.action);
 
-        const response = await this.chClient
-            .create({
-                timestamp: Date.now(),
-                ad: stat.ad,
-                platform: stat.platform,
-                userdata: JSON.stringify(stat.userdata) || 'undefined',
-                action: stat.action,
-                time: String(stat.time) || null,
-                userid: String(stat.userid)
-            })
-            .then(null, () => {this.countStats--});
-        return `Success create ${response}`;
+        if (stat.action === 'view') {
+            const response = await this.chClient
+                .create({
+                    timestamp: Date.now(),
+                    ad: stat.ad,
+                    platform: stat.platform,
+                    userdata: JSON.stringify(stat.userdata) || 'undefined',
+                    action: stat.action,
+                    time: String(stat.time) || null,
+                    userid: String(stat.userid)
+                })
+        }
+        return `Success create`;
     }
     async getIpData(ip: string, userId: string) {
         const data = await this.redisIpService.getIpInfo(userId)

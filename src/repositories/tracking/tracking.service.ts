@@ -1,7 +1,8 @@
 import {Inject, Injectable} from '@nestjs/common';
 import {TrackModel} from './entity/tracking.entity';
 import {trackingRedisService} from "../trackingRedis/trackingRedis.service";
-import {ActionName} from "./interfaces/tracking.interface";
+import {getFormattedData} from "./utils/getFormattedData";
+import {addDelayedJob} from "bullmq/dist/esm/scripts";
 
 
 @Injectable()
@@ -10,24 +11,42 @@ export class TrackingService {
         @Inject('Tracking')
         private readonly chClient: TrackModel,
         private readonly redisService: trackingRedisService,
+
     ) {
+        this.redisService = redisService;
+
     }
     async getDataFromRedis() {
         const [keys, data] = await this.redisService.getData();
-        const statsByActions = {};
+        if (keys === undefined) {
+            const chdata: any = await this.chClient.find({
+                select: `ad, action, userid, platform, count(*) AS total`,
+                groupBy: 'ad, action, userid, platform'
+            });
+            const chKeys = chdata.map(row => `${row.ad}:${row.action}:${row.userid}:${row.platform}`);
+            const chData = chdata.map(row => row.total);
+            await this.redisService.setData(chKeys, chData);
 
-        for (let i = 0; i<keys.length; i++) {
-            const [ad, action] = keys[i].split(':');
-
-            if (!statsByActions[ad]) {
-                statsByActions[ad] = {};
-            }
-
-            statsByActions[ad][action] = data[i];
+            return getFormattedData(chKeys, chData);
         }
-        return statsByActions;
+        return getFormattedData(keys, data);
     }
-    async recordStat(adid: string, userid: string, eventAction: ActionName) {
-        return `Success create ${eventAction}`;
+    async getDataForUserFromRedis(userid: string) {
+        const [keys, data] = await this.redisService.getDataForUser(userid)
+        return getFormattedData(keys, data)
+    }
+    async getDataForAdFromRedis(ad: string) {
+        const [keys, data] = await this.redisService.getDataForAd(ad)
+        return getFormattedData(keys, data)
+    }
+
+    async getDataForPlatformFromRedis(platform: string) {
+        const [keys, data] = await this.redisService.getDataForPlatform(platform)
+        return getFormattedData(keys, data)
+    }
+    async recordStat(JobData: any) {
+        const response = await this.redisService.incrStats(JobData);
+        /*const response = await this.chClient.insertMany(JobData)*/
+        return `Success create`;
     }
 }

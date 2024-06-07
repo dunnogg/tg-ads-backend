@@ -9,6 +9,7 @@ services:
       - '3000:3000'
     depends_on:
       - clickhouse
+      - redis
     restart: unless-stopped
     networks:
       - apinet
@@ -19,6 +20,7 @@ services:
       - REDIS_TRACKING=${REDIS_TRACKING}
       - REDIS_STATS=${REDIS_STATS}
       - REDIS_GEO=${REDIS_GEO}
+      - REDIS_CHCACHE=${REDIS_CHCACHE}
   clickhouse:
     image: clickhouse/clickhouse-server
     ports:
@@ -34,6 +36,20 @@ services:
       - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD}
     volumes:
       - chdata:/var/lib/clickhouse/
+    networks:
+      - apinet
+  redis:
+    image: redis
+    restart: always
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - rdsdata:/root/redis
+      - cache:/data
+    environment:
+      - REDIS_PASSWORD=1234
+      - REDIS_DATABASES=16
     networks:
       - apinet
   nginx:
