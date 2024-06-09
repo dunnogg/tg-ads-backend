@@ -4,8 +4,6 @@ import { Document } from 'mongoose';
 @Schema()
 export class Ad extends Document {
     token: string
-    __v: number
-    _id: string
     ads: string[]
     active: boolean
     title: string
@@ -22,10 +20,6 @@ export class Ad extends Document {
         topics: Array<string>
         specificChannels: Array<string>
         geo: Array<string>
-    }
-    exclude: {
-        topics: Array<string>
-        specificChannels: Array<string>
     }
     profileId: string
     limit: {
