@@ -1,5 +1,5 @@
 import { Connection } from 'mongoose';
-import {CatSchema} from "../../repositories/adMongo/schemas/cat.schema";
+import {CatSchema} from "../schemas/cat.schema";
 
 export const catsProviders = [
     {
