@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { RedisModule } from '@nestjs-modules/ioredis';
 import Redis from "ioredis";
 import * as process from "process";
+import {geoRedisService} from "./geoRedis.service";
 
 
 
@@ -19,6 +20,6 @@ const redisGeo = {
         })
         // url: `statsRedis://${process.env.REDIS_USERNAME}:${process.env.REDIS_PASSWORD}@${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`
     })],
-    exports: [RedisModule, redisGeo],
+    exports: [RedisModule, redisGeo, geoRedis],
 })
 export class geoRedis {}

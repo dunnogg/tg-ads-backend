@@ -6,11 +6,13 @@ import { ClickHouseModule } from "@oneralon/nestjs-clickhouse";
 import * as process from "process";
 import {StatsModule} from "./repositories/stats/stats.module";
 import {TrackingModule} from "./repositories/tracking/tracking.module";
+import {RtbModule} from "./rtbsystem/rtb.module";
 
 @Module({
   imports: [
     StatsModule,
     TrackingModule,
+    RtbModule,
     ConfigModule.forRoot({
       envFilePath: '.env',
     }),
